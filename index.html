@@ -10,10 +10,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* General Styles */
         body {
             font-family: 'Arial', sans-serif;
-            background: #121212; /* Dark background */
+            background: #121212;
             color: white;
             margin: 0;
             padding: 0;
@@ -28,13 +27,12 @@
         header h1 {
             font-size: 2.5em;
             font-weight: bold;
-            text-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
         }
         .section {
             margin: 20px auto;
             padding: 20px;
             max-width: 1200px;
-            background: #1e1e1e; /* Dark section background */
+            background: #1e1e1e;
             border-radius: 10px;
         }
         table {
@@ -43,28 +41,15 @@
             color: white;
         }
         table th {
-            background: rgba(0, 159, 77, 0.9); /* Green headers */
+            background: rgba(0, 159, 77, 0.9);
             color: white;
         }
         table td, table th {
             padding: 10px;
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
-        table tr:hover {
-            background: rgba(255, 255, 255, 0.1); /* Hover effect */
-        }
-        .badge-rebuys {
-            background: #ff4500;
-            color: white;
-            font-size: 0.9em;
-            padding: 5px;
-            border-radius: 5px;
-        }
-        #charts-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            justify-content: center;
+        .table-responsive {
+            overflow-x: auto; /* Allow scrolling for tables on small screens */
         }
         .chart {
             background: #1e1e1e;
@@ -72,6 +57,13 @@
             border-radius: 10px;
             max-width: 600px;
             width: 100%;
+            margin: 0 auto;
+        }
+        #charts-container {
+            display: flex;
+            flex-direction: column; /* Stack charts vertically */
+            align-items: center;
+            gap: 20px;
         }
         footer {
             background: #009f4d;
@@ -80,6 +72,12 @@
             padding: 10px;
             border-top: 4px solid #d7263d;
         }
+        @media (min-width: 768px) {
+            #charts-container {
+                flex-direction: row; /* Align charts side-by-side for larger screens */
+                justify-content: center;
+            }
+        }
     </style>
 </head>
 <body>
@@ -87,52 +85,56 @@
         <h1><i class="fas fa-dice"></i> POKER 24/25</h1>
     </header>
     <main class="container">
-        <!-- Standings -->
+        <!-- Standings Section -->
         <section class="section">
             <h2>Current Standings</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Player</th>
-                        <th>Total Points</th>
-                        <th>Games Played</th>
-                        <th>Wins</th>
-                        <th>2nd Place %</th>
-                        <th>3rd Place %</th>
-                        <th>Top 3 %</th>
-                        <th>Rebuys</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr><td>Robi</td><td>6</td><td>3</td><td>2 🏆</td><td>0%</td><td>0%</td><td>66.7%</td><td>2</td></tr>
-                    <tr><td>Kizo <span class="badge-rebuys">Most Rebuys</span></td><td>5</td><td>3</td><td>0</td><td>66.7%</td><td>33.3%</td><td>100%</td><td>3</td></tr>
-                    <tr><td>Zane</td><td>4</td><td>3</td><td>1 🥇</td><td>33.3%</td><td>0%</td><td>66.7%</td><td>1</td></tr>
-                    <tr><td>Sebo</td><td>2</td><td>2</td><td>0</td><td>50%</td><td>50%</td><td>100%</td><td>1</td></tr>
-                    <tr><td>Nimčo</td><td>1</td><td>1</td><td>0</td><td>0%</td><td>100%</td><td>100%</td><td>1</td></tr>
-                </tbody>
-            </table>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Player</th>
+                            <th>Total Points</th>
+                            <th>Games Played</th>
+                            <th>Wins</th>
+                            <th>2nd Place %</th>
+                            <th>3rd Place %</th>
+                            <th>Top 3 %</th>
+                            <th>Rebuys</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Robi</td><td>6</td><td>3</td><td>2 🏆</td><td>0%</td><td>0%</td><td>66.7%</td><td>2</td></tr>
+                        <tr><td>Kizo <span class="badge-rebuys">Most Rebuys</span></td><td>5</td><td>3</td><td>0</td><td>66.7%</td><td>33.3%</td><td>100%</td><td>3</td></tr>
+                        <tr><td>Zane</td><td>4</td><td>3</td><td>1 🥇</td><td>33.3%</td><td>0%</td><td>66.7%</td><td>1</td></tr>
+                        <tr><td>Sebo</td><td>2</td><td>2</td><td>0</td><td>50%</td><td>50%</td><td>100%</td><td>1</td></tr>
+                        <tr><td>Nimčo</td><td>1</td><td>1</td><td>0</td><td>0%</td><td>100%</td><td>100%</td><td>1</td></tr>
+                    </tbody>
+                </table>
+            </div>
         </section>
-        <!-- Game History -->
+        <!-- Game History Section -->
         <section class="section">
             <h2>Game History</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Game</th>
-                        <th>Winner</th>
-                        <th>Second Place</th>
-                        <th>Third Place</th>
-                        <th>Rebuys</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr><td>1</td><td>Zane 🥇</td><td>Sebo 🥈</td><td>Kizo 🥉</td><td>3</td></tr>
-                    <tr><td>2</td><td>Robi 🥇</td><td>Kizo 🥈</td><td>Zane 🥉</td><td>3</td></tr>
-                    <tr><td>3</td><td>Robi 🥇</td><td>Kizo 🥈</td><td>Nimčo 🥉</td><td>5</td></tr>
-                </tbody>
-            </table>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Game</th>
+                            <th>Winner</th>
+                            <th>Second Place</th>
+                            <th>Third Place</th>
+                            <th>Rebuys</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>1</td><td>Zane 🥇</td><td>Sebo 🥈</td><td>Kizo 🥉</td><td>3</td></tr>
+                        <tr><td>2</td><td>Robi 🥇</td><td>Kizo 🥈</td><td>Zane 🥉</td><td>3</td></tr>
+                        <tr><td>3</td><td>Robi 🥇</td><td>Kizo 🥈</td><td>Nimčo 🥉</td><td>5</td></tr>
+                    </tbody>
+                </table>
+            </div>
         </section>
-        <!-- Statistics -->
+        <!-- Statistics Section -->
         <section class="section">
             <h2>Statistics</h2>
             <div id="charts-container">
@@ -149,7 +151,7 @@
         <p>&copy; 2024 Poker 24/25 - Built with Precision</p>
     </footer>
     <script>
-        // Data for charts
+        // Chart Data
         const players = ["Robi", "Kizo", "Zane", "Sebo", "Nimčo"];
         const points = [6, 5, 4, 2, 1];
         const games = [3, 3, 3, 2, 1];
@@ -166,6 +168,7 @@
                 }]
             },
             options: {
+                responsive: true,
                 plugins: {
                     legend: { labels: { color: "white" } }
                 },
@@ -188,6 +191,7 @@
                 }]
             },
             options: {
+                responsive: true,
                 plugins: {
                     legend: { labels: { color: "white" } }
                 },
