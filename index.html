@@ -12,75 +12,33 @@
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* General Styles */
-        body {
-            font-family: 'Arial', sans-serif;
-            background: #121212;
-            color: #ffffff;
-            margin: 0;
-            padding: 0;
-        }
-        header {
-            background: linear-gradient(90deg, #009f4d, #d7263d);
-            color: white;
-            padding: 20px 0;
-            text-align: center;
-            border-bottom: 5px solid #ff4500;
-        }
-        header h1 {
-            font-size: 3em;
-            font-weight: bold;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-        }
-        .section {
-            margin: 20px 0;
-            padding: 20px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 10px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        table {
-            color: white;
-        }
-        table th {
-            background: rgba(0, 159, 77, 0.9);
-            color: white;
-        }
-        table td, table th {
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 10px;
-        }
-        table tr:hover {
-            background: rgba(255, 255, 255, 0.1);
-            cursor: pointer;
-        }
-        #charts-container {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-        .chart {
-            width: 100%;
-            background: rgba(255, 255, 255, 0.05);
-            padding: 15px;
-            border-radius: 10px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        footer {
-            text-align: center;
-            padding: 20px;
-            background: #009f4d;
-            color: white;
-            margin-top: 20px;
-            border-top: 5px solid #d7263d;
-        }
-        @media(min-width: 768px) {
-            #charts-container {
-                flex-direction: row;
-            }
-        }
-    </style>
+    /* Fix for Table Text Visibility */
+    table td, table th {
+        color: white; /* Ensure table text is visible */
+        text-align: center;
+    }
+
+    /* Improved Chart Layout */
+    #charts-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        justify-content: center; /* Center-align charts */
+        padding: 20px;
+    }
+
+    .chart {
+        width: 100%;
+        max-width: 600px; /* Ensure proper scaling on large screens */
+        margin: 0 auto;
+    }
+
+    /* Header Shadow for Better Contrast */
+    header {
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5); /* Smooth transition effect */
+    }
+</style>
+
 </head>
 <body>
     <header>
