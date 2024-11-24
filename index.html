@@ -16,7 +16,7 @@
         body {
             font-family: 'Arial', sans-serif;
             background: #121212;
-            color: white;
+            color: #ffffff;
             margin: 0;
             padding: 0;
         }
@@ -28,11 +28,10 @@
             border-bottom: 5px solid #ff4500;
         }
         header h1 {
-            font-size: 3.5em;
+            font-size: 3em;
             font-weight: bold;
             letter-spacing: 2px;
             text-transform: uppercase;
-            text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
         }
         .section {
             margin: 20px 0;
@@ -45,12 +44,11 @@
             color: white;
         }
         table th {
-            background: #d7263d;
-            color: #fff;
-            text-transform: uppercase;
+            background: rgba(0, 159, 77, 0.9);
+            color: white;
         }
         table td, table th {
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             padding: 10px;
         }
         table tr:hover {
@@ -59,15 +57,15 @@
         }
         #charts-container {
             display: flex;
-            flex-wrap: wrap;
-            justify-content: space-around;
+            flex-direction: column;
             gap: 20px;
         }
         .chart {
-            width: 40%;
+            width: 100%;
             background: rgba(255, 255, 255, 0.05);
             padding: 15px;
             border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
         footer {
             text-align: center;
@@ -76,6 +74,11 @@
             color: white;
             margin-top: 20px;
             border-top: 5px solid #d7263d;
+        }
+        @media(min-width: 768px) {
+            #charts-container {
+                flex-direction: row;
+            }
         }
     </style>
 </head>
@@ -98,12 +101,12 @@
                         <th>Win Percentage</th>
                     </tr>
                 </thead>
-                <tbody id="standings-body">
-                    <tr><td>Robi</td><td>6</td><td>3</td><td>2</td><td>2</td><td>66.7%</td></tr>
-                    <tr><td>Kizo</td><td>5</td><td>3</td><td>0</td><td>3</td><td>0.0%</td></tr>
-                    <tr><td>Zane</td><td>4</td><td>3</td><td>1</td><td>1</td><td>33.3%</td></tr>
-                    <tr><td>Sebo</td><td>2</td><td>2</td><td>0</td><td>1</td><td>0.0%</td></tr>
-                    <tr><td>Nimčo</td><td>1</td><td>1</td><td>0</td><td>1</td><td>0.0%</td></tr>
+                <tbody>
+                    <tr onclick="showPlayerStats('Robi')"><td>Robi</td><td>6</td><td>3</td><td>2</td><td>2</td><td>66.7%</td></tr>
+                    <tr onclick="showPlayerStats('Kizo')"><td>Kizo</td><td>5</td><td>3</td><td>0</td><td>3</td><td>0.0%</td></tr>
+                    <tr onclick="showPlayerStats('Zane')"><td>Zane</td><td>4</td><td>3</td><td>1</td><td>1</td><td>33.3%</td></tr>
+                    <tr onclick="showPlayerStats('Sebo')"><td>Sebo</td><td>2</td><td>2</td><td>0</td><td>1</td><td>0.0%</td></tr>
+                    <tr onclick="showPlayerStats('Nimčo')"><td>Nimčo</td><td>1</td><td>1</td><td>0</td><td>1</td><td>0.0%</td></tr>
                 </tbody>
             </table>
         </section>
@@ -141,17 +144,41 @@
                 </div>
             </div>
         </section>
+
+        <!-- Add Game Section -->
+        <section class="section" id="add-game">
+            <h2>New Game Entry</h2>
+            <form>
+                <div class="mb-3">
+                    <label for="players" class="form-label">Players</label>
+                    <input type="text" class="form-control" id="players" placeholder="Enter player names separated by commas">
+                </div>
+                <div class="mb-3">
+                    <label for="rebuys" class="form-label">Rebuys</label>
+                    <input type="text" class="form-control" id="rebuys" placeholder="Enter rebuys as comma-separated numbers">
+                </div>
+                <div class="mb-3">
+                    <label for="ranking" class="form-label">Ranking</label>
+                    <input type="text" class="form-control" id="ranking" placeholder="Enter rankings as comma-separated names">
+                </div>
+                <button type="button" class="btn btn-success">Submit Game Data</button>
+            </form>
+        </section>
     </main>
     <footer>
         <p>&copy; 2024 Poker Season 24/25 - Designed with Passion</p>
     </footer>
 
     <script>
-        // Player Stats
+        // Player Stats Modal
+        function showPlayerStats(player) {
+            alert(`Stats for ${player} will go here!`);
+        }
+
+        // Charts Data
         const players = ["Robi", "Kizo", "Zane", "Sebo", "Nimčo"];
         const points = [6, 5, 4, 2, 1];
         const games = [3, 3, 3, 2, 1];
-        const rebuys = [2, 3, 1, 1, 1];
 
         // Points Chart
         new Chart(document.getElementById('pointsChart'), {
@@ -166,6 +193,13 @@
             },
             options: {
                 responsive: true,
+                plugins: {
+                    legend: { labels: { color: 'white' } }
+                },
+                scales: {
+                    x: { ticks: { color: 'white' } },
+                    y: { ticks: { color: 'white' } }
+                }
             }
         });
 
@@ -180,8 +214,15 @@
                     backgroundColor: '#d7263d',
                 }]
             },
-            options: {
+                        options: {
                 responsive: true,
+                plugins: {
+                    legend: { labels: { color: 'white' } }
+                },
+                scales: {
+                    x: { ticks: { color: 'white' } },
+                    y: { ticks: { color: 'white' } }
+                }
             }
         });
     </script>
