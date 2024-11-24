@@ -1,0 +1,146 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Poker Season Standings</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        header {
+            background: #333;
+            color: #fff;
+            padding: 10px 0;
+            text-align: center;
+        }
+        main {
+            padding: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        table th, table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        table th {
+            background-color: #333;
+            color: white;
+        }
+        .section {
+            margin-bottom: 40px;
+        }
+        /* Responsive design for mobile */
+        @media screen and (max-width: 768px) {
+            table {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+            table th, table td {
+                font-size: 14px;
+                padding: 6px;
+            }
+            main {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Poker Season Standings</h1>
+    </header>
+    <main>
+        <section class="section" id="standings">
+            <h2>Current Standings</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Player</th>
+                        <th>Total Points</th>
+                        <th>Games Played</th>
+                        <th>Wins</th>
+                        <th>Rebuys</th>
+                    </tr>
+                </thead>
+                <tbody id="standings-body">
+                    <!-- Data will be inserted here -->
+                </tbody>
+            </table>
+        </section>
+        <section class="section" id="game-history">
+            <h2>Game History</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Game</th>
+                        <th>Winner</th>
+                        <th>Second Place</th>
+                        <th>Third Place</th>
+                        <th>Rebuys</th>
+                    </tr>
+                </thead>
+                <tbody id="game-history-body">
+                    <!-- Data will be inserted here -->
+                </tbody>
+            </table>
+        </section>
+    </main>
+    <script>
+        // Example data (this will be replaced with dynamic data)
+        const players = [
+            { name: "Robi", points: 6, games: 3, wins: 2, rebuys: 2 },
+            { name: "Kizo", points: 5, games: 3, wins: 0, rebuys: 3 },
+            { name: "Zane", points: 4, games: 3, wins: 1, rebuys: 1 },
+            { name: "Sebo", points: 2, games: 2, wins: 0, rebuys: 1 },
+            { name: "Nimčo", points: 1, games: 1, wins: 0, rebuys: 1 },
+            { name: "Nedo", points: 0, games: 2, wins: 0, rebuys: 2 },
+            { name: "Ruben", points: 0, games: 2, wins: 0, rebuys: 0 },
+            { name: "Ogi", points: 0, games: 2, wins: 0, rebuys: 1 },
+            { name: "Peko", points: 0, games: 1, wins: 0, rebuys: 0 },
+            { name: "Sašo", points: 0, games: 1, wins: 0, rebuys: 0 },
+        ];
+
+        const gameHistory = [
+            { game: 1, winner: "Zane", second: "Sebo", third: "Kizo", rebuys: 3 },
+            { game: 2, winner: "Robi", second: "Kizo", third: "Zane", rebuys: 3 },
+            { game: 3, winner: "Robi", second: "Kizo", third: "Nimčo", rebuys: 5 },
+        ];
+
+        // Populate standings table
+        const standingsBody = document.getElementById("standings-body");
+        players.forEach(player => {
+            const row = `<tr>
+                <td>${player.name}</td>
+                <td>${player.points}</td>
+                <td>${player.games}</td>
+                <td>${player.wins}</td>
+                <td>${player.rebuys}</td>
+            </tr>`;
+            standingsBody.innerHTML += row;
+        });
+
+        // Populate game history table
+        const gameHistoryBody = document.getElementById("game-history-body");
+        gameHistory.forEach(game => {
+            const row = `<tr>
+                <td>${game.game}</td>
+                <td>${game.winner}</td>
+                <td>${game.second}</td>
+                <td>${game.third}</td>
+                <td>${game.rebuys}</td>
+            </tr>`;
+            gameHistoryBody.innerHTML += row;
+        });
+    </script>
+</body>
+</html>
