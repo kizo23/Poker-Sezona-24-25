@@ -14,7 +14,7 @@
         body {
             font-family: 'Arial', sans-serif;
             background: #121212; /* Dark background */
-            color: white; /* Bright white text */
+            color: white;
             margin: 0;
             padding: 0;
         }
@@ -53,6 +53,13 @@
         table tr:hover {
             background: rgba(255, 255, 255, 0.1); /* Hover effect */
         }
+        .badge-rebuys {
+            background: #ff4500;
+            color: white;
+            font-size: 0.9em;
+            padding: 5px;
+            border-radius: 5px;
+        }
         #charts-container {
             display: flex;
             flex-wrap: wrap;
@@ -90,16 +97,18 @@
                         <th>Total Points</th>
                         <th>Games Played</th>
                         <th>Wins</th>
+                        <th>2nd Place %</th>
+                        <th>3rd Place %</th>
+                        <th>Top 3 %</th>
                         <th>Rebuys</th>
-                        <th>Win %</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr><td>Robi</td><td>6</td><td>3</td><td>2</td><td>2</td><td>66.7%</td></tr>
-                    <tr><td>Kizo</td><td>5</td><td>3</td><td>0</td><td>3</td><td>0.0%</td></tr>
-                    <tr><td>Zane</td><td>4</td><td>3</td><td>1</td><td>1</td><td>33.3%</td></tr>
-                    <tr><td>Sebo</td><td>2</td><td>2</td><td>0</td><td>1</td><td>0.0%</td></tr>
-                    <tr><td>Nimčo</td><td>1</td><td>1</td><td>0</td><td>1</td><td>0.0%</td></tr>
+                    <tr><td>Robi</td><td>6</td><td>3</td><td>2 🏆</td><td>0%</td><td>0%</td><td>66.7%</td><td>2</td></tr>
+                    <tr><td>Kizo <span class="badge-rebuys">Most Rebuys</span></td><td>5</td><td>3</td><td>0</td><td>66.7%</td><td>33.3%</td><td>100%</td><td>3</td></tr>
+                    <tr><td>Zane</td><td>4</td><td>3</td><td>1 🥇</td><td>33.3%</td><td>0%</td><td>66.7%</td><td>1</td></tr>
+                    <tr><td>Sebo</td><td>2</td><td>2</td><td>0</td><td>50%</td><td>50%</td><td>100%</td><td>1</td></tr>
+                    <tr><td>Nimčo</td><td>1</td><td>1</td><td>0</td><td>0%</td><td>100%</td><td>100%</td><td>1</td></tr>
                 </tbody>
             </table>
         </section>
@@ -117,9 +126,9 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr><td>1</td><td>Zane</td><td>Sebo</td><td>Kizo</td><td>3</td></tr>
-                    <tr><td>2</td><td>Robi</td><td>Kizo</td><td>Zane</td><td>3</td></tr>
-                    <tr><td>3</td><td>Robi</td><td>Kizo</td><td>Nimčo</td><td>5</td></tr>
+                    <tr><td>1</td><td>Zane 🥇</td><td>Sebo 🥈</td><td>Kizo 🥉</td><td>3</td></tr>
+                    <tr><td>2</td><td>Robi 🥇</td><td>Kizo 🥈</td><td>Zane 🥉</td><td>3</td></tr>
+                    <tr><td>3</td><td>Robi 🥇</td><td>Kizo 🥈</td><td>Nimčo 🥉</td><td>5</td></tr>
                 </tbody>
             </table>
         </section>
