@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -30,7 +31,6 @@
             max-width: 1200px;
             background: #1e1e1e;
             border-radius: 10px;
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
         }
         table {
             width: 100%;
@@ -72,16 +72,6 @@
             padding: 5px;
             border-radius: 5px;
         }
-        #charts-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            justify-content: center;
-        }
-        canvas {
-            max-width: 100%;
-            height: auto;
-        }
     </style>
 </head>
 <body>
@@ -92,7 +82,7 @@
         <!-- Current Standings Section -->
         <section class="section">
             <h2>Current Standings</h2>
-            <table id="standings-table">
+            <table>
                 <thead>
                     <tr>
                         <th>Player</th>
@@ -101,55 +91,17 @@
                         <th>Wins</th>
                         <th>Top 3 %</th>
                         <th>Rebuys</th>
-                        <th>Money Spent (€)</th>
-                        <th>Money Earned (€)</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td class="player-name">Robi
-                            <div class="player-tooltip">
-                                <strong>Stats:</strong><br>
-                                Total Points: 6<br>
-                                Games Played: 3<br>
-                                Wins: 2 🏆<br>
-                                Top 3 %: 66.7%<br>
-                                Rebuys: 2<br>
-                                Money Spent: 15€<br>
-                                Money Earned: 20€
-                            </div>
-                        </td>
-                        <td>6</td><td>3</td><td>2 🏆</td><td>66.7%</td><td>2</td><td>15</td><td>20</td>
+                        <td>Robi</td><td>6</td><td>3</td><td>2 🏆</td><td>66.7%</td><td>2</td>
                     </tr>
                     <tr>
-                        <td class="player-name">Kizo
-                            <div class="player-tooltip">
-                                <strong>Stats:</strong><br>
-                                Total Points: 5<br>
-                                Games Played: 3<br>
-                                Wins: 0<br>
-                                Top 3 %: 100%<br>
-                                Rebuys: 3<br>
-                                Money Spent: 20€<br>
-                                Money Earned: 0€
-                            </div>
-                        </td>
-                        <td>5</td><td>3</td><td>0</td><td>100%</td><td>3</td><td>20</td><td>0</td>
+                        <td>Kizo</td><td>5</td><td>3</td><td>0</td><td>100%</td><td>3</td>
                     </tr>
                     <tr>
-                        <td class="player-name">Zane
-                            <div class="player-tooltip">
-                                <strong>Stats:</strong><br>
-                                Total Points: 4<br>
-                                Games Played: 3<br>
-                                Wins: 1 🥇<br>
-                                Top 3 %: 66.7%<br>
-                                Rebuys: 1<br>
-                                Money Spent: 10€<br>
-                                Money Earned: 10€
-                            </div>
-                        </td>
-                        <td>4</td><td>3</td><td>1 🥇</td><td>66.7%</td><td>1</td><td>10</td><td>10</td>
+                        <td>Zane</td><td>4</td><td>3</td><td>1 🥇</td><td>66.7%</td><td>1</td>
                     </tr>
                 </tbody>
             </table>
@@ -173,29 +125,6 @@
                     <tr><td>3</td><td>Robi 🥇</td><td>Kizo 🥈</td><td>Nimčo 🥉</td><td>5</td></tr>
                 </tbody>
             </table>
-        </section>
-        <!-- New Game Data Input Section -->
-        <section class="section">
-            <h2>Add New Game</h2>
-            <form id="new-game-form">
-                <div class="mb-3">
-                    <label for="game-date" class="form-label">Game Date</label>
-                    <input type="date" id="game-date" class="form-control">
-                </div>
-                <div class="mb-3">
-                    <label for="top-3" class="form-label">Top 3 Players</label>
-                    <input type="text" id="top-3" class="form-control" placeholder="Enter top 3 players (e.g., Robi,Kizo,Zane)">
-                </div>
-                <div class="mb-3">
-                    <label for="all-players" class="form-label">All Players</label>
-                    <input type="text" id="all-players" class="form-control" placeholder="Enter all player names separated by commas">
-                </div>
-                <div class="mb-3">
-                    <label for="rebuys" class="form-label">Rebuys</label>
-                    <input type="text" id="rebuys" class="form-control" placeholder="Enter rebuys as comma-separated numbers">
-                </div>
-                <button type="button" class="btn btn-success" onclick="alert('Game data submitted!')">Submit</button>
-            </form>
         </section>
     </main>
 </body>
