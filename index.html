@@ -10,9 +10,10 @@
         body { font-family: 'Arial', sans-serif; background: #121212; color: white; margin: 0; padding: 0; }
         header { background: linear-gradient(90deg, #009f4d, #d7263d); padding: 15px; text-align: center; color: white; }
         header h1 { font-size: 2.5em; font-weight: bold; }
-        .section { margin: 20px auto; padding: 20px; max-width: 1200px; background: #1e1e1e; border-radius: 10px; }
+        .section { margin: 10px auto; padding: 15px; max-width: 1200px; background: #1e1e1e; border-radius: 10px; }
+        .table-wrapper { width: 100%; margin: 0 auto; overflow-x: auto; }
         table { width: 100%; text-align: center; color: white; border-collapse: collapse; }
-        table th, table td { padding: 8px; border: 1px solid rgba(255, 255, 255, 0.2); }
+        table th, table td { padding: 10px; border: 1px solid rgba(255, 255, 255, 0.2); }
         th:hover { background-color: #333; cursor: pointer; }
         .first-place { font-weight: bold; color: yellow; }
         .second-place { font-weight: bold; color: orange; }
@@ -42,19 +43,15 @@
             display: none;
             z-index: 999;
         }
-        .table-wrapper {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
+        .players-row { font-size: 0.9em; white-space: normal; word-wrap: break-word; }
         @media (max-width: 768px) {
-            table th, table td { padding: 4px; font-size: 0.8em; }
+            table th, table td { padding: 6px; font-size: 0.9em; }
             .section { padding: 10px; }
             table { font-size: 0.9em; }
             header h1 { font-size: 1.8em; }
         }
         @media (max-width: 480px) {
-            table { font-size: 0.75em; }
+            table { font-size: 0.8em; }
             header h1 { font-size: 1.5em; }
         }
     </style>
@@ -63,11 +60,11 @@
     <header>
         <h1>POKER 24/25</h1>
     </header>
-    <main class="container table-wrapper">
-        <!-- Rankings Section -->
-        <section class="section">
-            <h2>RANKINGS</h2>
-            <div class="table-responsive">
+    <main class="container">
+        <div class="table-wrapper">
+            <!-- Rankings Section -->
+            <section class="section">
+                <h2>RANKINGS</h2>
                 <table id="rankings-table">
                     <thead>
                         <tr>
@@ -84,13 +81,11 @@
                         <!-- Rankings data will be injected here dynamically -->
                     </tbody>
                 </table>
-            </div>
-        </section>
+            </section>
 
-        <!-- Game History Section -->
-        <section class="section">
-            <h2>GAME HISTORY</h2>
-            <div class="table-responsive">
+            <!-- Game History Section -->
+            <section class="section">
+                <h2>GAME HISTORY</h2>
                 <table id="game-history-table">
                     <thead>
                         <tr>
@@ -98,15 +93,15 @@
                             <th class="sortable">Results</th>
                             <th class="sortable">Players</th>
                             <th class="sortable">Rebuys</th>
-                            <th class="sortable">Pot (€)</th>
+                            <th class="sortable">€</th>
                         </tr>
                     </thead>
                     <tbody id="game-history">
                         <!-- Game history data will be injected here dynamically -->
                     </tbody>
                 </table>
-            </div>
-        </section>
+            </section>
+        </div>
     </main>
 
     <div class="overlay"></div>
@@ -115,16 +110,14 @@
     </div>
 
     <script>
-        // Game and Player Stats Data remains unchanged
         const games = [
             { players: ["Sebo", "Ogi", "Zane", "Robi", "Kizo"], rebuys: ["Robi", "Zane", "Kizo"], results: ["Zane", "Sebo", "Kizo"] },
             { players: ["Nedo", "Ruben", "Peko", "Sašo", "Zane", "Robi", "Kizo"], rebuys: ["Nedo", "Robi", "Kizo"], results: ["Robi", "Kizo", "Zane"] },
             { players: ["Kizo", "Ruben", "Nimčo", "Ogi", "Zane", "Sebo", "Robi", "Nedo"], rebuys: ["Kizo", "Ogi", "Nimčo", "Sebo", "Nedo"], results: ["Robi", "Kizo", "Nimčo"] },
             { players: ["Ogi", "Zane", "Sebo", "Robi", "Kizo"], rebuys: ["Robi"], results: ["Sebo", "Kizo", "Robi"] }
         ];
-        const playerStats = {};
 
-        // Functionality remains unchanged
+        const playerStats = {};
         games.forEach((game, gameIndex) => {
             const totalPot = (game.players.length * 5) + (game.rebuys.length * 5);
             game.results.forEach((player, index) => {
@@ -157,7 +150,7 @@
                 <td><span class="first-place">${game.results[0]}</span>, 
                     <span class="second-place">${game.results[1]}</span>, 
                     <span class="third-place">${game.results[2]}</span></td>
-                <td>${game.players.join(", ")}</td>
+                <td class="players-row">${game.players.join(", ")}</td>
                 <td>${game.rebuys.join(", ")}</td>
                 <td>${totalPot}€</td>
             `;
@@ -210,5 +203,6 @@
     </script>
 </body>
 </html>
+
 
 
