@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>POKER 24/25 - Rankings and Game History</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <style>
         body { font-family: 'Arial', sans-serif; background: #121212; color: white; margin: 0; padding: 0; }
         header { background: linear-gradient(90deg, #009f4d, #d7263d); padding: 15px; text-align: center; color: white; }
@@ -20,28 +19,14 @@
         .third-place { font-weight: bold; color: red; }
         .sortable { cursor: pointer; }
         .tooltip-container {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+            position: absolute;
             background: rgba(0, 0, 0, 0.9);
             color: white;
-            width: 40%;
-            padding: 20px;
-            border-radius: 10px;
+            padding: 10px;
+            border-radius: 5px;
             display: none;
             z-index: 1000;
-            text-align: center;
-        }
-        .overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            display: none;
-            z-index: 999;
+            white-space: pre-line;
         }
         .players-row { font-size: 0.9em; white-space: normal; word-wrap: break-word; }
         @media (max-width: 768px) {
@@ -68,13 +53,14 @@
                 <table id="rankings-table">
                     <thead>
                         <tr>
-                            <th class="sortable">#</th>
-                            <th class="sortable">Player</th>
-                            <th class="sortable">Points</th>
-                            <th class="sortable">Games</th>
-                            <th class="sortable">Wins</th>
-                            <th class="sortable">Rebuys</th>
-                            <th class="sortable">Net (€)</th>
+                            <th class="sortable" data-column="rank">#</th>
+                            <th class="sortable" data-column="player">Player</th>
+                            <th class="sortable" data-column="points">Points</th>
+                            <th class="sortable" data-column="games">Games</th>
+                            <th class="sortable" data-column="pg">P/G</th>
+                            <th class="sortable" data-column="wins">Wins</th>
+                            <th class="sortable" data-column="rebuys">Rebuys</th>
+                            <th class="sortable" data-column="net">Net (€)</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -89,11 +75,11 @@
                 <table id="game-history-table">
                     <thead>
                         <tr>
-                            <th class="sortable">#</th>
-                            <th class="sortable">Results</th>
-                            <th class="sortable">Players</th>
-                            <th class="sortable">Rebuys</th>
-                            <th class="sortable">€</th>
+                            <th class="sortable" data-column="number">#</th>
+                            <th class="sortable" data-column="results">Results</th>
+                            <th class="sortable" data-column="players">Players</th>
+                            <th class="sortable" data-column="rebuys">Rebuys</th>
+                            <th class="sortable" data-column="pot">€</th>
                         </tr>
                     </thead>
                     <tbody id="game-history">
@@ -104,105 +90,117 @@
         </div>
     </main>
 
-    <div class="overlay"></div>
-    <div class="tooltip-container" id="tooltip">
-        <!-- Tooltip content will be dynamically injected -->
-    </div>
+    <div class="tooltip-container" id="tooltip"></div>
 
     <script>
-        const games = [
-            { players: ["Sebo", "Ogi", "Zane", "Robi", "Kizo"], rebuys: ["Robi", "Zane", "Kizo"], results: ["Zane", "Sebo", "Kizo"] },
-            { players: ["Nedo", "Ruben", "Peko", "Sašo", "Zane", "Robi", "Kizo"], rebuys: ["Nedo", "Robi", "Kizo"], results: ["Robi", "Kizo", "Zane"] },
-            { players: ["Kizo", "Ruben", "Nimčo", "Ogi", "Zane", "Sebo", "Robi", "Nedo"], rebuys: ["Kizo", "Ogi", "Nimčo", "Sebo", "Nedo"], results: ["Robi", "Kizo", "Nimčo"] },
-            { players: ["Ogi", "Zane", "Sebo", "Robi", "Kizo"], rebuys: ["Robi"], results: ["Sebo", "Kizo", "Robi"] }
-        ];
+        document.addEventListener("DOMContentLoaded", () => {
+            const games = [
+                { players: ["Sebo", "Ogi", "Zane", "Robi", "Kizo"], rebuys: ["Robi", "Zane", "Kizo"], results: ["Zane", "Sebo", "Kizo"] },
+                { players: ["Nedo", "Ruben", "Peko", "Sašo", "Zane", "Robi", "Kizo"], rebuys: ["Nedo", "Robi", "Kizo"], results: ["Robi", "Kizo", "Zane"] },
+                { players: ["Kizo", "Ruben", "Nimčo", "Ogi", "Zane", "Sebo", "Robi", "Nedo"], rebuys: ["Kizo", "Ogi", "Nimčo", "Sebo", "Nedo"], results: ["Robi", "Kizo", "Nimčo"] },
+                { players: ["Ogi", "Zane", "Sebo", "Robi", "Kizo"], rebuys: ["Robi"], results: ["Sebo", "Kizo", "Robi"] },
+                { players: ["Peko", "Zane", "Robi", "Kizo"], rebuys: ["Zane", "Robi"], results: ["Robi", "Kizo", "Peko"] }
+            ];
 
-        const playerStats = {};
-        games.forEach((game, gameIndex) => {
-            const totalPot = (game.players.length * 5) + (game.rebuys.length * 5);
-            game.results.forEach((player, index) => {
-                if (!playerStats[player]) {
-                    playerStats[player] = { points: 0, games: 0, wins: 0, rebuys: 0, earned: 0, spent: 0, net: 0 };
-                }
-                playerStats[player].points += [3, 2, 1][index];
-                if (index === 0) {
-                    playerStats[player].earned += totalPot;
-                    playerStats[player].wins += 1;
-                }
-            });
-            game.players.forEach(player => {
-                if (!playerStats[player]) {
-                    playerStats[player] = { points: 0, games: 0, wins: 0, rebuys: 0, earned: 0, spent: 0, net: 0 };
-                }
-                playerStats[player].games += 1;
-                playerStats[player].spent += 5;
-            });
-            game.rebuys.forEach(player => {
-                if (!playerStats[player]) {
-                    playerStats[player] = { points: 0, games: 0, wins: 0, rebuys: 0, earned: 0, spent: 0, net: 0 };
-                }
-                playerStats[player].rebuys += 1;
-                playerStats[player].spent += 5;
-            });
-            const row = document.createElement("tr");
-            row.innerHTML = `
-                <td>${gameIndex + 1}</td>
-                <td><span class="first-place">${game.results[0]}</span>, 
-                    <span class="second-place">${game.results[1]}</span>, 
-                    <span class="third-place">${game.results[2]}</span></td>
-                <td class="players-row">${game.players.join(", ")}</td>
-                <td>${game.rebuys.join(", ")}</td>
-                <td>${totalPot}€</td>
-            `;
-            document.querySelector("#game-history").appendChild(row);
-        });
+            const playerStats = {};
 
-        Object.keys(playerStats).forEach(player => {
-            const stats = playerStats[player];
-            stats.net = stats.earned - stats.spent;
-        });
+            function calculateStats() {
+                games.forEach((game, gameIndex) => {
+                    const totalPot = (game.players.length * 5) + (game.rebuys.length * 5);
 
-        const rankingsTableBody = document.querySelector("#rankings-table tbody");
-        const sortedPlayers = Object.entries(playerStats).sort((a, b) => b[1].points - a[1].points);
-        sortedPlayers.forEach(([player, stats], index) => {
-            const row = document.createElement("tr");
-            if (index === 0) row.style.color = "yellow";
-            if (index === 1) row.style.color = "orange";
-            if (index === 2) row.style.color = "red";
-            row.innerHTML = `
-                <td>${index + 1}</td>
-                <td><span class="player-name" onclick="showTooltip('${player}')">${player}</span></td>
-                <td>${stats.points}</td>
-                <td>${stats.games}</td>
-                <td>${stats.wins}</td>
-                <td>${stats.rebuys}</td>
-                <td>${stats.net}€</td>
-            `;
-            rankingsTableBody.appendChild(row);
-        });
+                    // Populate Game History
+                    const gameHistoryRow = document.createElement("tr");
+                    gameHistoryRow.innerHTML = `
+                        <td>${gameIndex + 1}</td>
+                        <td><span class="first-place">${game.results[0]}</span>, 
+                            <span class="second-place">${game.results[1]}</span>, 
+                            <span class="third-place">${game.results[2]}</span></td>
+                        <td>${game.players.join(", ")}</td>
+                        <td>${game.rebuys.join(", ")}</td>
+                        <td>${totalPot}€</td>
+                    `;
+                    document.querySelector("#game-history").appendChild(gameHistoryRow);
 
-        function showTooltip(player) {
-            const stats = playerStats[player];
-            const tooltip = document.getElementById("tooltip");
-            tooltip.innerHTML = `
-                <h3>${player}'s Stats</h3>
-                <p>Points: ${stats.points}</p>
-                <p>Games: ${stats.games}</p>
-                <p>Wins: ${stats.wins}</p>
-                <p>Rebuys: ${stats.rebuys}</p>
-                <p>Net: ${stats.net}€</p>
-            `;
-            document.querySelector(".overlay").style.display = "block";
-            tooltip.style.display = "block";
-        }
+                    // Update Player Stats
+                    game.results.forEach((player, index) => {
+                        if (!playerStats[player]) {
+                            playerStats[player] = { points: 0, games: 0, wins: 0, rebuys: 0, earned: 0, spent: 0, net: 0 };
+                        }
+                        playerStats[player].points += [3, 2, 1][index];
+                        if (index === 0) {
+                            playerStats[player].earned += totalPot;
+                            playerStats[player].wins += 1;
+                        }
+                    });
+                    game.players.forEach(player => {
+                        if (!playerStats[player]) {
+                            playerStats[player] = { points: 0, games: 0, wins: 0, rebuys: 0, earned: 0, spent: 0, net: 0 };
+                        }
+                        playerStats[player].games += 1;
+                        playerStats[player].spent += 5;
+                    });
+                    game.rebuys.forEach(player => {
+                        if (!playerStats[player]) {
+                            playerStats[player] = { points: 0, games: 0, wins: 0, rebuys: 0, earned: 0, spent: 0, net: 0 };
+                        }
+                        playerStats[player].rebuys += 1;
+                        playerStats[player].spent += 5;
+                    });
+                });
+                Object.keys(playerStats).forEach(player => {
+                    const stats = playerStats[player];
+                    stats.net = stats.earned - stats.spent;
+                    stats.pointsPerGame = stats.games > 0 ? (stats.points / stats.games).toFixed(2) : "0.00";
+                });
+            }
 
-        document.querySelector(".overlay").addEventListener("click", () => {
-            document.querySelector(".overlay").style.display = "none";
-            document.getElementById("tooltip").style.display = "none";
+            function populateRankings() {
+                const rankingsTableBody = document.querySelector("#rankings-table tbody");
+                rankingsTableBody.innerHTML = "";
+                const sortedPlayers = Object.entries(playerStats).sort((a, b) => b[1].points - a[1].points);
+                sortedPlayers.forEach(([player, stats], index) => {
+                    const row = document.createElement("tr");
+                    if (index === 0) row.style.color = "yellow";
+                    if (index === 1) row.style.color = "orange";
+                    if (index === 2) row.style.color = "red";
+                    row.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td class="player-name" onmouseover="showTooltip(event, '${player}')" onmouseleave="hideTooltip()">${player}</td>
+                        <td>${stats.points}</td>
+                        <td>${stats.games}</td>
+                        <td>${stats.pointsPerGame}</td>
+                        <td>${stats.wins}</td>
+                        <td>${stats.rebuys}</td>
+                        <td>${stats.net}€</td>
+                    `;
+                    rankingsTableBody.appendChild(row);
+                });
+            }
+
+            window.showTooltip = (event, player) => {
+                const stats = playerStats[player];
+                const tooltip = document.getElementById("tooltip");
+                tooltip.innerHTML = `
+                    <strong>${player}'s Stats</strong><br>
+                    Points: ${stats.points}<br>
+                    Games: ${stats.games}<br>
+                    Wins: ${stats.wins}<br>
+                    Rebuys: ${stats.rebuys}<br>
+                    Net: ${stats.net}€<br>
+                    P/G: ${stats.pointsPerGame}
+                `;
+                tooltip.style.left = `${event.pageX}px`;
+                tooltip.style.top = `${event.pageY + 20}px`;
+                tooltip.style.display = "block";
+            };
+
+            window.hideTooltip = () => {
+                document.getElementById("tooltip").style.display = "none";
+            };
+
+            calculateStats();
+            populateRankings();
         });
     </script>
 </body>
 </html>
-
-
-
