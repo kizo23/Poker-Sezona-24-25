@@ -1,110 +1,141 @@
 <script>
-document.addEventListener("DOMContentLoaded", () => {
-    const games = [
-        { players: ["Sebo", "Ogi", "Zane", "Robi", "Kizo"], rebuys: ["Robi", "Zane", "Kizo"], results: ["Zane", "Sebo", "Kizo"] },
-        { players: ["Nedo", "Ruben", "Peko", "Sašo", "Zane", "Robi", "Kizo"], rebuys: ["Nedo", "Robi", "Kizo"], results: ["Robi", "Kizo", "Zane"] },
-        { players: ["Kizo", "Ruben", "Nimčo", "Ogi", "Zane", "Sebo", "Robi", "Nedo"], rebuys: ["Kizo", "Ogi", "Nimčo", "Sebo", "Nedo"], results: ["Robi", "Kizo", "Nimčo"] },
-        { players: ["Ogi", "Zane", "Sebo", "Robi", "Kizo"], rebuys: ["Robi"], results: ["Sebo", "Kizo", "Robi"] },
-        { players: ["Peko", "Zane", "Robi", "Kizo"], rebuys: ["Zane", "Robi"], results: ["Robi", "Kizo", "Peko"] }
-    ];
+    document.addEventListener("DOMContentLoaded", () => {
+        const buyInCost = 5;
+        const games = [ /* Your game data */ ];
+        const playerStats = {};
 
-    const playerStats = {};
-    const tooltip = document.getElementById("tooltip");
 
-    function calculateStats() {
-        games.forEach((game, gameIndex) => {
-            const totalPot = (game.players.length * 5) + (game.rebuys.length * 5);
-            game.results.forEach((player, index) => {
-                if (!playerStats[player]) {
-                    playerStats[player] = { points: 0, games: 0, wins: 0, rebuys: 0, earned: 0, spent: 0, net: 0 };
+        //Initializes the player stats object
+        const initPlayerStats = () => {
+            games.forEach(game => {
+               [...game.players, ...game.rebuys].forEach(player => {
+                 if(!playerStats[player]) {
+                   playerStats[player] = { points: 0, games: 0, wins: 0, rebuys: 0, net: 0, earned: 0, spent: 0 };
                 }
-                playerStats[player].points += [3, 2, 1][index];
-                if (index === 0) {
-                    playerStats[player].earned += totalPot;
-                    playerStats[player].wins += 1;
-                }
+               });
             });
-            game.players.forEach(player => {
-                if (!playerStats[player]) {
-                    playerStats[player] = { points: 0, games: 0, wins: 0, rebuys: 0, earned: 0, spent: 0, net: 0 };
-                }
-                playerStats[player].games += 1;
-                playerStats[player].spent += 5;
-            });
-            game.rebuys.forEach(player => {
-                if (!playerStats[player]) {
-                    playerStats[player] = { points: 0, games: 0, wins: 0, rebuys: 0, earned: 0, spent: 0, net: 0 };
-                }
-                playerStats[player].rebuys += 1;
-                playerStats[player].spent += 5;
-            });
-        });
-        Object.keys(playerStats).forEach(player => {
-            const stats = playerStats[player];
-            stats.net = stats.earned - stats.spent;
-            stats.pointsPerGame = stats.games > 0 ? (stats.points / stats.games).toFixed(2) : "0.00";
-        });
-    }
+        };
 
-    function populateRankings() {
-        const rankingsTableBody = document.querySelector("#rankings-table tbody");
-        rankingsTableBody.innerHTML = "";
-        const sortedPlayers = Object.entries(playerStats).sort((a, b) => b[1].points - a[1].points);
-        sortedPlayers.forEach(([player, stats], index) => {
+        const createTableRow = (content, className = '') => {
             const row = document.createElement("tr");
-            if (index === 0) row.style.color = "yellow";
-            if (index === 1) row.style.color = "orange";
-            if (index === 2) row.style.color = "red";
-            row.innerHTML = `
-                <td>${index + 1}</td>
-                <td class="player-name" onmouseover="showTooltip(event, '${player}')" onmouseleave="hideTooltip()" ontouchstart="toggleTooltip(event, '${player}')">${player}</td>
-                <td>${stats.points}</td>
-                <td>${stats.games}</td>
-                <td>${stats.pointsPerGame}</td>
-                <td>${stats.wins}</td>
-                <td>${stats.rebuys}</td>
-                <td>${stats.net}€</td>
+            row.className = className;
+            row.innerHTML = content;
+            return row;
+        };
+          const createGameHistoryRowContent = (game, index, totalPot) => {
+               return `
+                    <td>${index + 1}</td>
+                    <td><span class="first-place">${game.results[0]}</span>,
+                        <span class="second-place">${game.results[1]}</span>,
+                        <span class="third-place">${game.results[2]}</span></td>
+                    <td>${game.players.join(", ")}</td>
+                    <td>${game.rebuys.join(", ")}</td>
+                    <td>${totalPot}€</td>
+                `;
+            };
+
+            const createRankingTableRowContent = (rank, name, stats) => {
+                  let color = "";
+                 if (rank === 0) color = "yellow";
+                 if (rank === 1) color = "orange";
+                 if (rank === 2) color = "red";
+                   return `
+                    <td>${rank + 1}</td>
+                     <td style="color: ${color}" onmouseover="showTooltip(event, '${name}')" onmouseleave="hideTooltip()">${name}</td>
+                    <td>${stats.points}</td>
+                    <td>${stats.games}</td>
+                    <td>${(stats.points / stats.games).toFixed(2)}</td>
+                    <td>${stats.wins}</td>
+                    <td>${stats.rebuys}</td>
+                    <td>${stats.net}€</td>
+                `;
+            };
+        const calculateStats = () => {
+            const gameHistory = document.getElementById("game-history");
+            const payouts = [0.5, 0.3, 0.2];
+
+            games.forEach((game, index) => {
+                const totalPot = (game.players.length * buyInCost) + (game.rebuys.length * buyInCost);
+
+                // Game History Table
+                const rowContent = createGameHistoryRowContent(game, index, totalPot);
+                gameHistory.appendChild(createTableRow(rowContent));
+
+                // Update Player Stats
+                 game.results.forEach((player, position) => {
+                      if (!playerStats[player]) {
+                            console.error(`Player ${player} found in results but not initialized.`);
+                            return; // Skip if player is not initialized
+                        }
+                    const points = [3, 2, 1][position];
+                    playerStats[player].points += points;
+                    if (position < payouts.length) {
+                        playerStats[player].earned += totalPot * payouts[position];
+                        if (position === 0) {
+                         playerStats[player].wins += 1;
+                        }
+                     }
+                   });
+
+
+                game.players.forEach(player => {
+                     if (!playerStats[player]) {
+                         console.error(`Player ${player} found in players but not initialized.`);
+                          return;
+                    }
+                    playerStats[player].games += 1;
+                    playerStats[player].spent += buyInCost;
+                });
+
+                 game.rebuys.forEach(player => {
+                     if (!playerStats[player]) {
+                           console.error(`Player ${player} found in rebuys but not initialized.`);
+                           return;
+                       }
+                       playerStats[player].rebuys += 1;
+                       playerStats[player].spent += buyInCost;
+                 });
+            });
+
+            Object.values(playerStats).forEach(player => {
+                player.net = player.earned - player.spent;
+            });
+        };
+
+          const populateRankings = () => {
+             const rankingsTable = document.querySelector("#rankings-table tbody");
+            rankingsTable.innerHTML = ""; // Clear existing rows
+
+            const sortedPlayers = Object.entries(playerStats).sort((a, b) => b[1].points - a[1].points);
+
+             sortedPlayers.forEach(([name, stats], rank) => {
+                  const rowContent = createRankingTableRowContent(rank, name, stats);
+                   rankingsTable.appendChild(createTableRow(rowContent));
+             });
+        };
+         const showTooltip = (event, player) => {
+            const tooltip = document.getElementById("tooltip");
+            const stats = playerStats[player];
+            tooltip.innerHTML = `
+                <strong>${player}'s Stats</strong><br>
+                Points: ${stats.points}<br>
+                Games: ${stats.games}<br>
+                Wins: ${stats.wins}<br>
+                Rebuys: ${stats.rebuys}<br>
+                Net: ${stats.net}€<br>
+                P/G: ${(stats.points / stats.games).toFixed(2)}
             `;
-            rankingsTableBody.appendChild(row);
-        });
-    }
+            tooltip.style.left = `${event.pageX + 15}px`;
+            tooltip.style.top = `${event.pageY + 15}px`;
+            tooltip.style.display = "block";
+        };
 
-    window.showTooltip = (event, player) => {
-        const stats = playerStats[player];
-        tooltip.innerHTML = `
-            <strong>${player}'s Stats</strong><br>
-            Points: ${stats.points}<br>
-            Games: ${stats.games}<br>
-            Wins: ${stats.wins}<br>
-            Rebuys: ${stats.rebuys}<br>
-            Net: ${stats.net}€<br>
-            P/G: ${stats.pointsPerGame}
-        `;
-        tooltip.style.left = `${event.pageX}px`;
-        tooltip.style.top = `${event.pageY + 20}px`;
-        tooltip.style.display = "block";
-    };
-
-    window.hideTooltip = () => {
-        tooltip.style.display = "none";
-    };
-
-    window.toggleTooltip = (event, player) => {
-        event.preventDefault();
-        if (tooltip.style.display === "block") {
-            hideTooltip();
-        } else {
-            showTooltip(event, player);
-        }
-    };
-
-    document.addEventListener("click", (e) => {
-        if (!e.target.classList.contains("player-name")) {
-            hideTooltip();
-        }
+        const hideTooltip = () => {
+            const tooltip = document.getElementById("tooltip");
+            tooltip.style.display = "none";
+        };
+          initPlayerStats();
+        calculateStats();
+        populateRankings();
     });
-
-    calculateStats();
-    populateRankings();
-});
 </script>
