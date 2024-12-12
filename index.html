@@ -1,141 +1,219 @@
-<script>
-    document.addEventListener("DOMContentLoaded", () => {
-        const buyInCost = 5;
-        const games = [ /* Your game data */ ];
-        const playerStats = {};
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POKER 24/25 - Rankings and Game History</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { font-family: 'Arial', sans-serif; background: #121212; color: white; margin: 0; padding: 0; }
+        header { background: linear-gradient(90deg, #009f4d, #d7263d); padding: 15px; text-align: center; color: white; }
+        header h1 { font-size: 2.5em; font-weight: bold; }
+        .section { margin: 10px auto; padding: 15px; max-width: 1200px; background: #1e1e1e; border-radius: 10px; }
+        .table-wrapper { width: 100%; margin: 0 auto; overflow-x: auto; }
+        table { width: 100%; text-align: center; color: white; border-collapse: collapse; }
+        table th, table td { padding: 10px; border: 1px solid rgba(255, 255, 255, 0.2); }
+        th:hover { background-color: #333; cursor: pointer; }
+        .first-place { font-weight: bold; color: yellow; }
+        .second-place { font-weight: bold; color: orange; }
+        .third-place { font-weight: bold; color: red; }
+        .tooltip-container {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+            z-index: 1000;
+            white-space: pre-line;
+        }
+        @media (max-width: 768px) {
+            table th, table td { padding: 6px; font-size: 0.9em; }
+            .section { padding: 10px; }
+            table { font-size: 0.9em; }
+            header h1 { font-size: 1.8em; }
+        }
+        @media (max-width: 480px) {
+            table { font-size: 0.8em; }
+            header h1 { font-size: 1.5em; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>POKER 24/25</h1>
+    </header>
+    <main class="container">
+        <div class="table-wrapper">
+            <!-- Rankings Section -->
+            <section class="section">
+                <h2>RANKINGS</h2>
+                <table id="rankings-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Player</th>
+                            <th>Points</th>
+                            <th>Games</th>
+                            <th>P/G</th>
+                            <th>Wins</th>
+                            <th>Rebuys</th>
+                            <th>Net (€)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Rankings data will be injected here -->
+                    </tbody>
+                </table>
+            </section>
 
+            <!-- Game History Section -->
+            <section class="section">
+                <h2>GAME HISTORY</h2>
+                <table id="game-history-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Results</th>
+                            <th>Players</th>
+                            <th>Rebuys</th>
+                            <th>€</th>
+                        </tr>
+                    </thead>
+                    <tbody id="game-history">
+                        <!-- Game history data will be injected here -->
+                    </tbody>
+                </table>
+            </section>
+        </div>
+    </main>
 
-        //Initializes the player stats object
-        const initPlayerStats = () => {
-            games.forEach(game => {
-               [...game.players, ...game.rebuys].forEach(player => {
-                 if(!playerStats[player]) {
-                   playerStats[player] = { points: 0, games: 0, wins: 0, rebuys: 0, net: 0, earned: 0, spent: 0 };
-                }
-               });
-            });
-        };
+    <div class="tooltip-container" id="tooltip"></div>
 
-        const createTableRow = (content, className = '') => {
-            const row = document.createElement("tr");
-            row.className = className;
-            row.innerHTML = content;
-            return row;
-        };
-          const createGameHistoryRowContent = (game, index, totalPot) => {
-               return `
-                    <td>${index + 1}</td>
-                    <td><span class="first-place">${game.results[0]}</span>,
-                        <span class="second-place">${game.results[1]}</span>,
-                        <span class="third-place">${game.results[2]}</span></td>
-                    <td>${game.players.join(", ")}</td>
-                    <td>${game.rebuys.join(", ")}</td>
-                    <td>${totalPot}€</td>
-                `;
-            };
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            try {
+                console.log("Script started!");
+                const games = [
+                    { players: ["Sebo", "Ogi", "Zane", "Robi", "Kizo"], rebuys: ["Robi", "Zane", "Kizo"], results: ["Zane", "Sebo", "Kizo"] },
+                    { players: ["Nedo", "Ruben", "Peko", "Sašo", "Zane", "Robi", "Kizo"], rebuys: ["Nedo", "Robi", "Kizo"], results: ["Robi", "Kizo", "Zane"] },
+                    { players: ["Kizo", "Ruben", "Nimčo", "Ogi", "Zane", "Sebo", "Robi", "Nedo"], rebuys: ["Kizo", "Ogi", "Nimčo", "Sebo", "Nedo"], results: ["Robi", "Kizo", "Nimčo"] },
+                    { players: ["Ogi", "Zane", "Sebo", "Robi", "Kizo"], rebuys: ["Robi"], results: ["Sebo", "Kizo", "Robi"] },
+                    { players: ["Peko", "Zane", "Robi", "Kizo"], rebuys: ["Zane", "Robi"], results: ["Robi", "Kizo", "Peko"] }
+                ];
 
-            const createRankingTableRowContent = (rank, name, stats) => {
-                  let color = "";
-                 if (rank === 0) color = "yellow";
-                 if (rank === 1) color = "orange";
-                 if (rank === 2) color = "red";
-                   return `
-                    <td>${rank + 1}</td>
-                     <td style="color: ${color}" onmouseover="showTooltip(event, '${name}')" onmouseleave="hideTooltip()">${name}</td>
-                    <td>${stats.points}</td>
-                    <td>${stats.games}</td>
-                    <td>${(stats.points / stats.games).toFixed(2)}</td>
-                    <td>${stats.wins}</td>
-                    <td>${stats.rebuys}</td>
-                    <td>${stats.net}€</td>
-                `;
-            };
-        const calculateStats = () => {
-            const gameHistory = document.getElementById("game-history");
-            const payouts = [0.5, 0.3, 0.2];
+                const playerStats = {};
 
-            games.forEach((game, index) => {
-                const totalPot = (game.players.length * buyInCost) + (game.rebuys.length * buyInCost);
+                // Populate Game History and Calculate Player Stats
+                const calculateStats = () => {
+                    const gameHistory = document.getElementById("game-history");
+                    games.forEach((game, index) => {
+                        const totalPot = (game.players.length * 5) + (game.rebuys.length * 5);
 
-                // Game History Table
-                const rowContent = createGameHistoryRowContent(game, index, totalPot);
-                gameHistory.appendChild(createTableRow(rowContent));
+                        // Game History Table
+                        const row = document.createElement("tr");
+                        row.innerHTML = `
+                            <td>${index + 1}</td>
+                            <td><span class="first-place">${game.results[0]}</span>, 
+                                <span class="second-place">${game.results[1]}</span>, 
+                                <span class="third-place">${game.results[2]}</span></td>
+                            <td>${game.players.join(", ")}</td>
+                            <td>${game.rebuys.join(", ")}</td>
+                            <td>${totalPot}€</td>
+                        `;
+                        gameHistory.appendChild(row);
 
-                // Update Player Stats
-                 game.results.forEach((player, position) => {
-                      if (!playerStats[player]) {
-                            console.error(`Player ${player} found in results but not initialized.`);
-                            return; // Skip if player is not initialized
-                        }
-                    const points = [3, 2, 1][position];
-                    playerStats[player].points += points;
-                    if (position < payouts.length) {
-                        playerStats[player].earned += totalPot * payouts[position];
-                        if (position === 0) {
-                         playerStats[player].wins += 1;
-                        }
-                     }
-                   });
+                        // Update Player Stats
+                        game.results.forEach((player, position) => {
+                            if (!playerStats[player]) {
+                                playerStats[player] = { points: 0, games: 0, wins: 0, rebuys: 0, net: 0, earned: 0, spent: 0 };
+                            }
+                            const points = [3, 2, 1][position];
+                            playerStats[player].points += points;
+                            if (position === 0) {
+                                playerStats[player].wins += 1;
+                                playerStats[player].earned += totalPot;
+                            }
+                        });
 
+                        game.players.forEach(player => {
+                            if (!playerStats[player]) {
+                                playerStats[player] = { points: 0, games: 0, wins: 0, rebuys: 0, net: 0, earned: 0, spent: 0 };
+                            }
+                            playerStats[player].games += 1;
+                            playerStats[player].spent += 5;
+                        });
 
-                game.players.forEach(player => {
-                     if (!playerStats[player]) {
-                         console.error(`Player ${player} found in players but not initialized.`);
-                          return;
-                    }
-                    playerStats[player].games += 1;
-                    playerStats[player].spent += buyInCost;
-                });
+                        game.rebuys.forEach(player => {
+                            playerStats[player].rebuys += 1;
+                            playerStats[player].spent += 5;
+                        });
+                    });
 
-                 game.rebuys.forEach(player => {
-                     if (!playerStats[player]) {
-                           console.error(`Player ${player} found in rebuys but not initialized.`);
-                           return;
-                       }
-                       playerStats[player].rebuys += 1;
-                       playerStats[player].spent += buyInCost;
-                 });
-            });
+                    Object.values(playerStats).forEach(player => {
+                        player.net = player.earned - player.spent;
+                    });
+                };
 
-            Object.values(playerStats).forEach(player => {
-                player.net = player.earned - player.spent;
-            });
-        };
+                // Populate Rankings Table
+                const populateRankings = () => {
+                    const rankingsTable = document.querySelector("#rankings-table tbody");
+                    rankingsTable.innerHTML = "";
 
-          const populateRankings = () => {
-             const rankingsTable = document.querySelector("#rankings-table tbody");
-            rankingsTable.innerHTML = ""; // Clear existing rows
+                    const sortedPlayers = Object.entries(playerStats).sort((a, b) => b[1].points - a[1].points);
+                    sortedPlayers.forEach(([name, stats], rank) => {
+                        const row = document.createElement("tr");
+                        let color = "";
+                        if (rank === 0) color = "yellow";
+                        if (rank === 1) color = "orange";
+                        if (rank === 2) color = "red";
 
-            const sortedPlayers = Object.entries(playerStats).sort((a, b) => b[1].points - a[1].points);
+                        row.innerHTML = `
+                            <td>${rank + 1}</td>
+                            <td style="color: ${color}" onmouseover="showTooltip(event, '${name}')" onmouseleave="hideTooltip()">${name}</td>
+                            <td>${stats.points}</td>
+                            <td>${stats.games}</td>
+                            <td>${(stats.points / stats.games).toFixed(2)}</td>
+                            <td>${stats.wins}</td>
+                            <td>${stats.rebuys}</td>
+                            <td>${stats.net}€</td>
+                        `;
+                        rankingsTable.appendChild(row);
+                    });
+                };
 
-             sortedPlayers.forEach(([name, stats], rank) => {
-                  const rowContent = createRankingTableRowContent(rank, name, stats);
-                   rankingsTable.appendChild(createTableRow(rowContent));
-             });
-        };
-         const showTooltip = (event, player) => {
-            const tooltip = document.getElementById("tooltip");
-            const stats = playerStats[player];
-            tooltip.innerHTML = `
-                <strong>${player}'s Stats</strong><br>
-                Points: ${stats.points}<br>
-                Games: ${stats.games}<br>
-                Wins: ${stats.wins}<br>
-                Rebuys: ${stats.rebuys}<br>
-                Net: ${stats.net}€<br>
-                P/G: ${(stats.points / stats.games).toFixed(2)}
-            `;
-            tooltip.style.left = `${event.pageX + 15}px`;
-            tooltip.style.top = `${event.pageY + 15}px`;
-            tooltip.style.display = "block";
-        };
+                const showTooltip = (event, player) => {
+                    const tooltip = document.getElementById("tooltip");
+                    const stats = playerStats[player];
+                    tooltip.innerHTML = `
+                        <strong>${player}'s Stats</strong><br>
+                        Points: ${stats.points}<br>
+                        Games: ${stats.games}<br>
+                        Wins: ${stats.wins}<br>
+                        Rebuys: ${stats.rebuys}<br>
+                        Net: ${stats.net}€<br>
+                        P/G: ${(stats.points / stats.games).toFixed(2)}
+                    `;
+                    tooltip.style.left = `${event.pageX + 15}px`;
+                    tooltip.style.top = `${event.pageY + 15}px`;
+                    tooltip.style.display = "block";
+                };
 
-        const hideTooltip = () => {
-            const tooltip = document.getElementById("tooltip");
-            tooltip.style.display = "none";
-        };
-          initPlayerStats();
-        calculateStats();
-        populateRankings();
-    });
-</script>
+                const hideTooltip = () => {
+                    const tooltip = document.getElementById("tooltip");
+                    tooltip.style.display = "none";
+                };
+
+                window.showTooltip = showTooltip;
+                window.hideTooltip = hideTooltip;
+
+                calculateStats();
+                populateRankings();
+                console.log("Script executed successfully!");
+            } catch (error) {
+                console.error("Error executing script:", error);
+            }
+        });
+    </script>
+</body>
+</html>
